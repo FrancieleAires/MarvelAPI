@@ -1,2 +1,33 @@
-/**/
-
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+}
+.logo {
+    height: 75px;
+    width: 400px;
+    background-color: #ED1D24;
+  }
+  .imagem {
+    height: 50px;
+    width: 130px;
+    position: absolute;
+    border-radius: 0;
+    padding: 10px;
+   }
+   .start {
+    height: 40px;
+    width: 140px;
+    background-color: #3b3b37;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    position: absolute;
+    top: 90%;
+    left: 35%;
+    transition: all .4s ease-in-out;
+    font-family: Tomorrow;
+   }
+   .start:hover {
+    background-color: #FBCA03;
+}

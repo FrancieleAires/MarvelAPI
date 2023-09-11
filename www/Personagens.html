@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Marvel API</title>
+    <style>
+      body {
+        background-color: #D0D8D9;
+        font-family: Tomorrow;
+      }
+      .logo {
+     height: 50px;
+     width: 100%;
+     background-color: #ED1D24;
+   }
+   .search {
+     margin-top: 70px;
+     display: flex;
+     padding: 10px;
+   }
+   .imagem {
+    height: 50px;
+    width: 130px;
+    position: absolute;
+    border-radius: 0;
+   }
+   
+    .meuCSS {
+      background-color: rgb(29, 133, 218);
+      padding: 10px;
+      display: block;
+     
+    }
+    img {
+      height: 200px;
+      width: 200px;
+      border-radius: 20px;
+     
+    }
+    #listaSeries {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .character-search-box {
+          width: 260px;
+          margin-left: 10px;
+          
+        }
+      .button {
+        background-color: #ED1D24;
+        border: none;
+        border-radius: 5px;
+        margin-left: 5%;
+        width: 70px;
+        color: white;
+      }
+      .button2 {
+        background-color: #ED1D24;
+        border: none;
+        border-radius: 5px;
+        margin-left: 5%;
+        width: 70px;
+        margin-left: 38%;
+        color: white;
+        margin-top: 10px;
+      }
+      .Personagens {
+        height: 110px;
+        width: 90px;
+        margin: 5px;
+      }
+      .imagens2 {
+        margin-left: 25px;
+        margin-top: 15px;
+        justify-content: space-between;
+      }
+      .imagens2.hidden {
+            display: none;
+        }
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: absolute;
+            left: 90%;
+            top: 15px;
+        }
+
+        .line {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+        }
+
+        .nav-links {
+            display: none;
+            height: 900px;
+            width: 200px;
+            background-color: #a7a5a5;
+            position: absolute;
+            left: 55%;
+            top: 50px;
+            z-index: 1000; 
+        }
+
+        .nav-links.active {
+            display: block;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+        }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img class="imagem" src="logo.png" alt="logo">
+    <div class="navbar">
+      <div class="hamburger" onclick="toggleNav()">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+      </div>
+      <div class="nav-links" id="navLinks">
+          <a href="quemSomos.html">Quem Somos</a>
+          <a href="index.html">Início</a>
+          <a href="inicio.html">Personagens/ <br>carrosel</a>
+      </div>
+  </div>
+    
+  </div>
+
+  <div class="search">
+    <div class="input">
+    <input  type="text" name="name" id="search-input" class="form-control character-search-box" 
+     placeholder="(Ex. Hulk, Iron Man, Thor, etc...) ">
+    </div>
+     <button class="button" id="search-button"> Search</button>
+   </div>
+   <div class="results-container" id="results-container">
+
+   </div>
+   <div id="listaSeries">
+
+  </div>
+   <div class="imagens2">
+    <img class="Personagens" src="Falcao.png" alt="volverine">
+    <img class="Personagens"src="HomemDeFerro.png" alt="Falcão">
+    <img class="Personagens" src="wolverine.png" alt="Homem Formiga">
+    <img class="Personagens" src="hulk.png" alt="Homem deFerro">
+    <img class="Personagens" src="homemformiga.png" alt="hulk">
+    <img class="Personagens" src="loki.png" alt="loki">
+    <img class="Personagens" src="ViuvaNegra.png" alt="Viuva negra">
+    <img class="Personagens" src="thor.png" alt="thor">
+    <img class="Personagens" src="wolverine2.png" alt="thor">
+  </div>
+   
+  <button class="button2" id="clear-button"> Clear</button>
+
+    <script>     
+
+document.addEventListener('DOMContentLoaded', ()=> {
+
+const myHash = '7d8dab1e53981c3edd4fbbee4378c728';
+const myPublicKey = '0199f3cfc44b942137bc8dc6b45938d2';
+const myTimestamp = '1692300644';
+const myEndPoint = 'comics';   
+const myEndPoint1 = 'characters';       
+const divListaSeries = document.getElementById('listaSeries');
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
+const clearButton = document.getElementById('clear-button');
+const imagens2 = document.querySelector('.imagens2');
+
+
+function fetchCharacters(searchTerm) {
+    const searchUrl = `http://gateway.marvel.com/v1/public/characters?name=${searchTerm}&ts=${myTimestamp}&apikey=${myPublicKey}&hash=${myHash}`;
+
+    fetch(searchUrl)
+        .then(response => response.json())
+        .then(result => {
+            divListaSeries.innerHTML = ''; 
+            const listaDeResultados = result.data.results;
+
+            listaDeResultados.forEach(item => {
+                divListaSeries.insertAdjacentHTML('beforeend',
+                    `<div>
+                        <h6>${item.name}</h6>
+                        <img src="${item.thumbnail.path}.${item.thumbnail.extension}">
+                    </div>`);
+            });
+        })
+        .catch(error => {
+            console.error('Erro na busca:', error);
+        });
+}
+function hideImages() {
+                imagens2.classList.add('hidden');
+            }
+            
+function showImages() {
+                imagens2.classList.remove('hidden');
+            }
+function displayAllCharacters() {
+    fetchCharacters('');
+}
+
+        searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value;
+        if (searchTerm) {
+                    hideImages(); 
+                    fetchCharacters(searchTerm);
+                }
+});
+
+    searchInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+        const searchTerm = searchInput.value;
+        fetchCharacters(searchTerm);
+    }
+});
+
+clearButton.addEventListener('click', () => {
+    searchInput.value = '';
+    showImages();
+    displayAllCharacters();
+});
+
+displayAllCharacters();
+
+});
+function toggleNav() {
+            var navLinks = document.getElementById("navLinks");
+            if (navLinks.style.display === "block") {
+                navLinks.style.display = "none";
+            } else {
+                navLinks.style.display = "block";
+            }
+        }
+
+      
+    </script>
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
