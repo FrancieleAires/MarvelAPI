@@ -122,6 +122,12 @@
             margin: 10px 0;
             text-align: center;
         }
+         .Alinhar {
+          margin-left: 10%;
+        }
+        .desc {
+          margin-right: 10px;
+        }
   </style>
 </head>
 <body>
@@ -134,9 +140,9 @@
           <div class="line"></div>
       </div>
       <div class="nav-links" id="navLinks">
-          <a href="quemSomos.html">Quem Somos</a>
           <a href="index.html">Início</a>
-          <a href="inicio.html">Personagens/ <br>carrosel</a>
+          <a href="QuemSomos.html">Quem Somos</a>
+          <a href="Personagens.html">Personagens</a>
       </div>
   </div>
     
@@ -164,7 +170,7 @@
     <img class="Personagens" src="loki.png" alt="loki">
     <img class="Personagens" src="ViuvaNegra.png" alt="Viuva negra">
     <img class="Personagens" src="thor.png" alt="thor">
-    <img class="Personagens" src="wolverine2.png" alt="thor">
+    <img class="Personagens" src="Thanos.png" alt="thor">
   </div>
    
   <button class="button2" id="clear-button"> Clear</button>
@@ -196,9 +202,10 @@ function fetchCharacters(searchTerm) {
 
             listaDeResultados.forEach(item => {
                 divListaSeries.insertAdjacentHTML('beforeend',
-                    `<div>
-                        <h6>${item.name}</h6>
-                        <img src="${item.thumbnail.path}.${item.thumbnail.extension}">
+                    `<div class="Alinhar">
+                        <h6 class="Alinhar">${item.name}</h6>
+                        <img class="Alinhar" src="${item.thumbnail.path}.${item.thumbnail.extension}">
+                        <div class="desc">${item.description} </div>
                     </div>`);
             });
         })
