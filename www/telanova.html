@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Marvel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="interagir.js"></script>
+    <script src="darkmode.js"></script>
+    <script src="exibir.js"></script>
+    <style>
+        body {
+            background-color: #D0D8D9;
+        font-family: Tomorrow;
+        }
+             .logo {
+     height: 50px;
+     width: 100%;
+     background-color: #ED1D24;
+   }
+     .imagem {
+    height: 50px;
+    width: 130px;
+    position: absolute;
+    border-radius: 0;
+   }
+           .hamburger {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: absolute;
+            left: 90%;
+            top: 15px;
+        }
+
+        .line {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+        }
+
+        .nav-links {
+            display: none;
+            height: 900px;
+            width: 200px;
+            background-color: #a7a5a5;
+            position: absolute;
+            left: 55%;
+            top: 50px;
+            z-index: 1000; 
+        }
+
+        .nav-links.active {
+            display: block;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .hero img {
+            padding-top: 170px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.hero h2 {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.hero p {
+    font-size: 14px;
+    color: #666;
+}
+.personagem img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    border-radius: 30px;
+}
+
+.personagem .name {
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.personagem .description {
+    font-size: 16px;
+    color: #333;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 16px 16px;
+}
+
+.personagem:hover {
+    transform: scale(1.05);
+}
+.pesquisa {
+    position: absolute;
+    text-align: center;
+    top: 150px;
+    left: 75px;
+    width: 170px;
+}
+.titulo {
+    color: #ED1D24;
+    position: absolute;
+    top: 3em;
+    left: 4em;
+}
+  .div {
+            background-color: #ED1D24;
+            color: white;
+            position: absolute;
+            top: 90px;
+            width: 100%;
+            text-align: center;
+        }
+        .search {
+            height: 35px;
+            width: 200px;
+           
+        }
+
+        </style>
+</head>
+<body>
+       <div class="logo">
+    <img class="imagem" src="logo.png" alt="logo">
+    <div class="navbar">
+      <div class="hamburger" onclick="toggleNav()">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+      </div>
+      <div class="nav-links" id="navLinks">
+          <a href="index.html">Início</a>
+          <a href="QuemSomos.html">Quem Somos</a>
+          <a href="Personagens.html">Personagens</a>
+      </div>
+  </div>
+        
+
+    <main>
+        <div class="div">
+        <h1 class="title">Personagens</h1>
+    </div>
+        <button id="toggle-view-button">
+            <i class="fas fa-list"></i> 
+            <i class="fas fa-th"></i> 
+        </button>
+        <div class="pesquisa">
+            <input type="text" name="search" id="search" class="search" placeholder="pesquise por um herói">
+        </div>
+        <div id="personagens" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+        </div>
+    </main>
+    
+        <script>
+            const publicKey = 'bc6189e1f8f98580674b7c342aa1d163';
+            const privateKey = '8e32b177b450fa8dd81bc5d65eddcb55f26c6e92';
+    
+            function generateHash(timestamp) {
+                const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString();
+                return hash;
+            }
+    
+            function searchHero() {
+                const searchInput = document.getElementById("search");
+                const searchTerm = searchInput.value.trim();
+    
+                if (searchTerm === "") {
+                    return;
+                }
+    
+                const timestamp = new Date().getTime();
+                const hash = generateHash(timestamp);
+    
+                const apiUrl = `https://gateway.marvel.com/v1/public/characters?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&nameStartsWith=${searchTerm}`;
+    
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        displayHeroes(data.data.results);
+                    })
+                    .catch(error => {
+                        console.error('Erro ao fazer a requisição:', error);
+                    });
+            }
+    
+            function displayHeroes(heroes) {
+                const personagensDiv = document.getElementById("personagens");
+                personagensDiv.innerHTML = "";
+    
+                heroes.forEach(hero => {
+                    const divHero = document.createElement("div");
+                    divHero.classList.add("hero");
+    
+                    const img = document.createElement("img");
+                    img.src = `${hero.thumbnail.path}.${hero.thumbnail.extension}`;
+                    img.alt = hero.name;
+    
+                    const name = document.createElement("h2");
+                    name.textContent = hero.name;
+    
+                    const description = document.createElement("p");
+                    description.textContent = hero.description || "Descrição não disponível";
+    
+                    divHero.appendChild(img);
+                    divHero.appendChild(name);
+                    divHero.appendChild(description);
+    
+                    personagensDiv.appendChild(divHero);
+                });
+            }
+    
+            const searchInput = document.getElementById("search");
+            searchInput.addEventListener("input", debounce(searchHero, 800));
+    
+            function debounce(func, delay) {
+                let timeoutId;
+                return function () {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(function () {
+                        func.apply(context, args);
+                    }, delay);
+                };
+            }
+            function toggleNav() {
+            var navLinks = document.getElementById("navLinks");
+            if (navLinks.style.display === "block") {
+                navLinks.style.display = "none";
+            } else {
+                navLinks.style.display = "block";
+            }
+        }
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    </body>
+    </html>
